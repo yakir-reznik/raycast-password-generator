@@ -20,4 +20,4 @@ All values are generated locally with the system cryptographic random number gen
 
 ## Development
 
-Run `pnpm dev` to load the extension in Raycast development mode. Before publishing to the Raycast Store, replace the `author` value in `package.json` with your verified Raycast Store handle.
+Run `npm run dev` to load the extension in Raycast development mode. Before publishing to the Raycast Store, replace the `author` value in `package.json` with your verified Raycast Store handle.
