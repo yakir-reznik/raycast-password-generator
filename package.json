@@ -70,7 +70,7 @@
       "type": "checkbox",
       "label": "Use easy-to-read characters only",
       "required": false,
-      "default": false
+      "default": true
     }
   ],
   "commands": [

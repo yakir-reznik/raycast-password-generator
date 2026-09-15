@@ -15,9 +15,15 @@ interface PasswordFormValues {
   lowercase: boolean;
   digits: boolean;
   symbols: boolean;
+  easyToRead: boolean;
 }
 
-const GROUPS = [UPPERCASE_CHARACTERS, LOWERCASE_CHARACTERS, DIGIT_CHARACTERS, SYMBOL_CHARACTERS];
+const EASY_TO_READ_GROUPS = [UPPERCASE_CHARACTERS, LOWERCASE_CHARACTERS, DIGIT_CHARACTERS, SYMBOL_CHARACTERS];
+const STANDARD_GROUPS = ["ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz", "0123456789", SYMBOL_CHARACTERS];
+
+function characterGroups(excludeHardToReadCharacters: boolean): string[] {
+  return excludeHardToReadCharacters ? EASY_TO_READ_GROUPS : STANDARD_GROUPS;
+}
 
 function parseLength(value: string): number {
   return /^\d+$/.test(value) ? Number(value) : Number.NaN;
@@ -33,11 +39,12 @@ function entropy(length: number, selectedGroups: string[]): string {
 export default function GeneratePassword() {
   const [length, setLength] = useState("20");
   const [groups, setGroups] = useState([true, true, true, true]);
-  const selectedGroups = GROUPS.filter((_, index) => groups[index]);
+  const [easyToRead, setEasyToRead] = useState(true);
+  const selectedGroups = characterGroups(easyToRead).filter((_, index) => groups[index]);
   const parsedLength = parseLength(length);
 
   async function submit(values: PasswordFormValues) {
-    const selected = GROUPS.filter(
+    const selected = characterGroups(values.easyToRead).filter(
       (_, index) => [values.uppercase, values.lowercase, values.digits, values.symbols][index],
     );
     const requestedLength = parseLength(values.length);
@@ -97,9 +104,15 @@ export default function GeneratePassword() {
       />
       <Form.Checkbox
         id="symbols"
-        label="Symbols"
+        label="Symbols (! @ # $ % ^ & * - _)"
         value={groups[3]}
         onChange={(value) => setGroups([groups[0], groups[1], groups[2], value])}
+      />
+      <Form.Checkbox
+        id="easyToRead"
+        label="Exclude hard-to-read characters: O, 0, I, l, and 1"
+        value={easyToRead}
+        onChange={setEasyToRead}
       />
     </Form>
   );
