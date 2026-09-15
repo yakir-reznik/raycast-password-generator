@@ -1,11 +1,11 @@
 {
   "name": "secret-generator",
   "version": "1.0.0",
-  "packageManager": "pnpm@11.9.0",
+  "packageManager": "npm@11.16.0",
   "description": "Generate rule-compliant passwords, memorable passphrases, and developer secrets in Raycast.",
   "title": "Secret Generator",
   "icon": "shield.png",
-  "author": "yakirreznik",
+  "author": "yakir_reznik",
   "license": "MIT",
   "categories": [
     "Developer Tools",
@@ -25,6 +25,7 @@
     "build": "ray build",
     "dev": "ray develop",
     "lint": "ray lint",
+    "publish": "ray publish",
     "fix-lint": "ray lint --fix"
   },
   "dependencies": {
@@ -84,7 +85,6 @@
         "pass",
         "password",
         "string",
-        "webhook",
         "secret",
         "custom password",
         "strong password",
@@ -103,7 +103,6 @@
         "pass",
         "password",
         "string",
-        "webhook",
         "secret",
         "memorable password",
         "words",
@@ -122,7 +121,6 @@
         "pass",
         "password",
         "string",
-        "webhook",
         "secret",
         "api key",
         "token",
@@ -143,7 +141,6 @@
         "pass",
         "password",
         "string",
-        "webhook",
         "secret",
         "8 chars",
         "8 characters",
@@ -163,12 +160,10 @@
         "pass",
         "password",
         "string",
-        "webhook",
         "secret",
         "12 chars",
         "12 characters",
-        "12",
-        "password"
+        "12"
       ]
     },
     {
@@ -183,12 +178,10 @@
         "pass",
         "password",
         "string",
-        "webhook",
         "secret",
         "16 chars",
         "16 characters",
-        "16",
-        "password"
+        "16"
       ]
     },
     {
@@ -203,12 +196,10 @@
         "pass",
         "password",
         "string",
-        "webhook",
         "secret",
         "20 chars",
         "20 characters",
-        "20",
-        "password"
+        "20"
       ]
     },
     {
@@ -223,7 +214,6 @@
         "pass",
         "password",
         "string",
-        "webhook",
         "secret",
         "24 chars",
         "24 characters",
@@ -243,7 +233,6 @@
         "pass",
         "password",
         "string",
-        "webhook",
         "secret",
         "8 chars",
         "8 characters",
@@ -264,7 +253,6 @@
         "pass",
         "password",
         "string",
-        "webhook",
         "secret",
         "12 chars",
         "12 characters",
@@ -285,7 +273,6 @@
         "pass",
         "password",
         "string",
-        "webhook",
         "secret",
         "16 chars",
         "16 characters",
@@ -306,7 +293,6 @@
         "pass",
         "password",
         "string",
-        "webhook",
         "secret",
         "24 chars",
         "24 characters",
@@ -327,7 +313,6 @@
         "pass",
         "password",
         "string",
-        "webhook",
         "secret",
         "32 chars",
         "32 characters",
@@ -348,12 +333,10 @@
         "pass",
         "password",
         "string",
-        "webhook",
         "secret",
         "32 chars",
         "32 characters",
         "url safe",
-        "webhook",
         "api secret",
         "token"
       ]
