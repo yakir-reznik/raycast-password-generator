@@ -11,7 +11,11 @@ interface Preferences {
 
 const PASSWORD_CHARACTERS = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#$%^&*-_";
 const EASY_TO_READ_PASSWORD_CHARACTERS = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789";
-const URL_SAFE_CHARACTERS = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789-_";
+export const URL_SAFE_CHARACTERS = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789-_";
+export const UPPERCASE_CHARACTERS = "ABCDEFGHJKLMNPQRSTUVWXYZ";
+export const LOWERCASE_CHARACTERS = "abcdefghjkmnpqrstuvwxyz";
+export const DIGIT_CHARACTERS = "23456789";
+export const SYMBOL_CHARACTERS = "!@#$%^&*-_";
 
 /** Generates an unbiased random string using the operating system's cryptographically secure RNG. */
 export function randomString(length: number, characters: string): string {
@@ -32,6 +36,53 @@ export function randomString(length: number, characters: string): string {
   return result;
 }
 
+export function randomIndex(maxExclusive: number): number {
+  const maximumUnbiasedByte = 256 - (256 % maxExclusive);
+  let byte: number;
+  do {
+    byte = randomBytes(1)[0];
+  } while (byte >= maximumUnbiasedByte);
+  return byte % maxExclusive;
+}
+
+/** Generates a password containing at least one character from every selected group. */
+export function randomPassword(length: number, characterGroups: string[]): string {
+  if (characterGroups.length === 0) throw new Error("Choose at least one character group.");
+  if (length < characterGroups.length)
+    throw new Error(`Choose a length of at least ${characterGroups.length}.`);
+
+  const characters = characterGroups.join("");
+  const result = characterGroups.map((group) => randomString(1, group));
+  result.push(...randomString(length - result.length, characters));
+
+  // Fisher–Yates shuffle preserves the character-group guarantee without biasing positions.
+  for (let index = result.length - 1; index > 0; index--) {
+    const swapIndex = randomIndex(index + 1);
+    [result[index], result[swapIndex]] = [result[swapIndex], result[index]];
+  }
+
+  return result.join("");
+}
+
+export async function deliverSecret(secret: string, label: string): Promise<void> {
+  const preferences = getPreferenceValues<Preferences>();
+
+  if (preferences.delivery === "paste") {
+    await Clipboard.paste(secret);
+    await showHUD(`${label} pasted`);
+    return;
+  }
+
+  await Clipboard.copy(secret);
+
+  if (preferences.delivery === "copy-and-close") {
+    await showHUD(`${label} copied`);
+    return;
+  }
+
+  await showToast({ style: Toast.Style.Success, title: `${label} copied` });
+}
+
 export async function generateAndDeliver(length: number, kind: SecretKind): Promise<void> {
   const preferences = getPreferenceValues<Preferences>();
   const characters =
@@ -42,20 +93,15 @@ export async function generateAndDeliver(length: number, kind: SecretKind): Prom
         : preferences.easyToRead
           ? EASY_TO_READ_PASSWORD_CHARACTERS
           : PASSWORD_CHARACTERS;
-  const secret = randomString(length, characters);
+  const secret =
+    kind === "password"
+      ? randomPassword(
+          length,
+          preferences.easyToRead
+            ? [UPPERCASE_CHARACTERS, LOWERCASE_CHARACTERS, DIGIT_CHARACTERS]
+            : [UPPERCASE_CHARACTERS, LOWERCASE_CHARACTERS, DIGIT_CHARACTERS, SYMBOL_CHARACTERS],
+        )
+      : randomString(length, characters);
 
-  if (preferences.delivery === "paste") {
-    await Clipboard.paste(secret);
-    await showHUD(`${length}-character ${kind} pasted`);
-    return;
-  }
-
-  await Clipboard.copy(secret);
-
-  if (preferences.delivery === "copy-and-close") {
-    await showHUD(`${length}-character ${kind} copied`);
-    return;
-  }
-
-  await showToast({ style: Toast.Style.Success, title: `${length}-character ${kind} copied` });
+  await deliverSecret(secret, `${length}-character ${kind}`);
 }
