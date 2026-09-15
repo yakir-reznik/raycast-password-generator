@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "packageManager": "npm@11.16.0",
   "description": "Generate local passwords, passphrases, and developer-ready secrets in Raycast.",
-  "title": "Developer Secret Generator",
+  "title": "Random Password & Secret Generator",
   "icon": "shield.png",
   "author": "yakir_reznik",
   "license": "MIT",
