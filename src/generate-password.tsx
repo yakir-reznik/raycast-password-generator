@@ -19,6 +19,10 @@ interface PasswordFormValues {
 
 const GROUPS = [UPPERCASE_CHARACTERS, LOWERCASE_CHARACTERS, DIGIT_CHARACTERS, SYMBOL_CHARACTERS];
 
+function parseLength(value: string): number {
+  return /^\d+$/.test(value) ? Number(value) : Number.NaN;
+}
+
 function entropy(length: number, selectedGroups: string[]): string {
   const alphabetSize = selectedGroups.reduce((total, group) => total + group.length, 0);
   return alphabetSize > 0
@@ -30,13 +34,13 @@ export default function GeneratePassword() {
   const [length, setLength] = useState("20");
   const [groups, setGroups] = useState([true, true, true, true]);
   const selectedGroups = GROUPS.filter((_, index) => groups[index]);
-  const parsedLength = Number.parseInt(length, 10);
+  const parsedLength = parseLength(length);
 
   async function submit(values: PasswordFormValues) {
     const selected = GROUPS.filter(
       (_, index) => [values.uppercase, values.lowercase, values.digits, values.symbols][index],
     );
-    const requestedLength = Number.parseInt(values.length, 10);
+    const requestedLength = parseLength(values.length);
 
     if (!Number.isInteger(requestedLength) || requestedLength < 4 || requestedLength > 256) {
       await showToast({
@@ -57,10 +61,7 @@ export default function GeneratePassword() {
       return;
     }
 
-    await deliverSecret(
-      randomPassword(requestedLength, selected),
-      `${requestedLength}-character password`,
-    );
+    await deliverSecret(randomPassword(requestedLength, selected), `${requestedLength}-character password`);
   }
 
   return (
@@ -74,13 +75,7 @@ export default function GeneratePassword() {
       <Form.Description
         text={`${entropy(Number.isInteger(parsedLength) ? parsedLength : 0, selectedGroups)}. Every selected group is guaranteed to appear.`}
       />
-      <Form.TextField
-        id="length"
-        title="Length"
-        placeholder="4–256"
-        value={length}
-        onChange={setLength}
-      />
+      <Form.TextField id="length" title="Length" placeholder="4–256" value={length} onChange={setLength} />
       <Form.Separator />
       <Form.Checkbox
         id="uppercase"
